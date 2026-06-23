@@ -2,12 +2,20 @@ class ChatResponseJob < ApplicationJob
   def perform(chat_id, content)
     chat = Chat.find(chat_id)
 
-    context = Document.pluck(:content).join("\n\n")
+    relevant_chunks = DocumentChunk
+      .where("content ILIKE ?", "%#{content}%")
+      .limit(5)
+
+    context = relevant_chunks.pluck(:content).join("\n\n")
     instructions = <<~TXT
       Você é um assistente técnico.
-      Responda apenas com base no contexto.
-      Não repita o contexto.
-      Se não souber, responda: não encontrei essa informação nos documentos.
+
+      Responda apenas com base no contexto fornecido.
+
+      Se o contexto não tiver informação suficiente, diga:
+      "não encontrei essa informação nos documentos"
+
+      Seja objetivo.
 
       Contexto:
       #{context}

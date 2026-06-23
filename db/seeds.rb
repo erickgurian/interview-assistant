@@ -15,4 +15,11 @@ Dir[Rails.root.join("db/seeds/markdown/*.md")].each do |file_path|
   document = Document.find_or_initialize_by(title: title.humanize)
   document.content = content
   document.save!
+
+  content.split("\n\n").each do |chunk|
+    DocumentChunk.create!(
+      document: document,
+      content: chunk
+    )
+  end
 end
