@@ -2,17 +2,19 @@ class ChatResponseJob < ApplicationJob
   def perform(chat_id, content)
     chat = Chat.find(chat_id)
 
-    relevant_chunks = DocumentChunk
-      .where("content ILIKE ?", "%#{content}%")
-      .limit(5)
+    chunks = RagService.search(content)
 
-    context = relevant_chunks.pluck(:content).join("\n\n")
+    context = chunks.pluck(:content).join("\n\n")
+
     instructions = <<~TXT
       Você é um assistente técnico.
 
       Responda apenas com base no contexto fornecido.
 
       Se o contexto não tiver informação suficiente, diga:
+      "não encontrei essa informação nos documentos"
+
+      Se não houver informações, diga:
       "não encontrei essa informação nos documentos"
 
       Seja objetivo.

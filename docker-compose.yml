@@ -4,7 +4,7 @@ services:
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -b 0.0.0.0"
     volumes:
       - .:/app
-      - bundle_data:/usr/local/bundle
+      #- bundle_data:/usr/local/bundle
     ports:
       - "3000:3000"
     env_file:
@@ -18,7 +18,7 @@ services:
     command: bundle exec sidekiq
     volumes:
       - .:/app
-      - bundle_data:/usr/local/bundle
+      #- bundle_data:/usr/local/bundle
     env_file:
       - .env
     depends_on:

@@ -1,4 +1,9 @@
+require "sidekiq/web" # require the web UI
+
 Rails.application.routes.draw do
+  mount Sidekiq::Web => "/sidekiq"
+  mount ActionCable.server => "/cable"
+
   resources :chats do
     resources :messages, only: [ :create ]
   end
