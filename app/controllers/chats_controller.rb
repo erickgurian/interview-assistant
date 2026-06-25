@@ -22,7 +22,9 @@ class ChatsController < ApplicationController
   end
 
   def show
-    @message = @chat.messages.build
+    @chats = Chat.order(created_at: :desc).limit(5)
+    @chat_messages = @chat.messages.where.not(role: "system").where.not(id: nil)
+    @message = @chat.messages.where.not(role: "system").build
   end
 
   def destroy
